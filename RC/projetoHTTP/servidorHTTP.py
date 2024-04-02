@@ -1,15 +1,15 @@
 #implementação de um servidor base para interpratação de métodos HTTP
 
 import socket
-import pathlib
 
 def file_is_principal(filename):
     principal = ["index.html", "ipsum.html"]
     if filename in principal:
         return True
-    else
+    else:
         return False
 
+files = ["index.html", "ipsum.html"]
 
 #definindo o endereço IP do host
 SERVER_HOST = ''
@@ -79,7 +79,6 @@ while True:
                 if filename == '':
                     filename = 'index.html'
 
-
                 #define se o arquivo sendo solicitado é binário ou não
                 arquivo_binario = False
                 if extension in tipo_binario:
@@ -89,12 +88,9 @@ while True:
                 try:
                     #abrir o arquivo e enviar para o cliente
                     if arquivo_binario == True:
-                        fin = open('principaldocs/' + filename, 'rb')
+                        fin = open(filename, 'rb')
                     else:
-                        if file_is_principal(filename):
-                            fin = open('principaldocs/' + filename, 'r', encoding='utf-8')
-                        else:
-                            fin = open('secondarydocs/' + filename, 'r', encoding='utf-8')
+                        fin = open(filename, 'r', encoding='utf-8')
 
                     #leio o conteúdo do arquivo para uma variável
                     content = fin.read()    
@@ -118,17 +114,19 @@ while True:
                 if file_is_principal(filename):
                     response = ("HTTP1.1 403 FORBIDDEN\n\n<h1>ERROR 403!<br>Forbidden.</h1>").encode()
                 else:
-                    if 
-                        with open(file, "w") as arquivo:
+                    if filename in files:
+                        with open(filename, "w") as arquivo:
                             arquivo.write(content)
                         response = ("HTTP1.1 200 OK\n\n" + content).encode()
                         arquivo.close()
                     else:
-                        file.touch()
-                        with open(file, "w") as arquivo:
+                        filename.touch()
+                        with open(filename, "w") as arquivo:
                             arquivo.write(content)
                         response = ("HTTP1.1 201 CREATED\n\n" + content).encode()
                         arquivo.close()
+                        files.append("filename")
+                        print("files")
             
             else:
                 response = ("HTTP1.1 501 NOT IMPLEMENTED\n\n<h1>ERROR 501!<br>Unsupported method</h1>")
@@ -141,5 +139,3 @@ while True:
         client_connection.close()
 
 server_socket.close()
-
-
